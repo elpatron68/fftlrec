@@ -1,4 +1,4 @@
-fftlrec
+﻿fftlrec
 =======
 
 Firefox Timelapse Recorder
@@ -79,7 +79,7 @@ Q: Will there be a version for Linux, MacOS, iOS, Android, ...?
 A: Definately not.
 
 (8) Version information
-v0.1	11/20/2013	Initial semi-public beta release
-v0.1.1	11/22/2013	Add an annotation to the video
+v0.1		11/20/2013	Initial semi-public beta release
+v0.1.0.2	11/22/2013	Add an annotation to the video
 			Add a logo to the video
 			Convert the video to animated GIF

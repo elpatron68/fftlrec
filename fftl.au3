@@ -1,14 +1,16 @@
+﻿; Firefox Timelapse
+; 2013 Markus Busche, m.busche+fftl@gmail.com
+;
+;
 #region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=camera-video_mount.ico
 #AutoIt3Wrapper_UseUpx=n
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.1
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.2
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=elpatron@cepheus.uberspace.de
 #AutoIt3Wrapper_Run_Tidy=y
 #endregion ;**** Directives created by AutoIt3Wrapper_GUI ****
-; Firefox Timelapse
-; 2013 Markus Busche, m.busche+fftl@gmail.com
-;
+
 #include <FF.au3>
 #include <File.au3>
 #include <WindowsConstants.au3>
@@ -22,40 +24,38 @@ HotKeySet("+!s", "_postprocessing")
 ; Coordinates of rectangle to be recorded
 Global $iX1, $iY1, $iX2, $iY2, $fps
 Global $count = 0
+Global $inifile = @ScriptDir & "\fftl.ini"
+Global $logfile = @ScriptDir & "\fftl.log"
 
 ; Read values from INI file fftl.ini
-Global $URL = IniRead("fftl.ini", "settings", "url", "")
-Global $directory = IniRead("fftl.ini", "files", "directory", @ScriptDir & "\")
-Global $imagefilename = IniRead("fftl.ini", "files", "imagefilename", "image_%d.jpg")
-Global $videofilename = IniRead("fftl.ini", "files", "videofilename", "fftl-video.avi")
-Global $reload = IniRead("fftl.ini", "settings", "reload", "60") * 1000
-Global $tooltips = IniRead("fftl.ini", "settings", "tooltips", "True")
-Global $log = IniRead("fftl.ini", "settings", "log", "False")
-; Rectangle
-Global $iX1 = IniRead("fftl.ini", "region", "X1", "")
-Global $iY1 = IniRead("fftl.ini", "region", "Y1", "")
-Global $iX2 = IniRead("fftl.ini", "region", "X2", "")
-Global $iY2 = IniRead("fftl.ini", "region", "Y2", "")
-Global $fps = IniRead("fftl.ini", "video", "fps", "5")
-Global $title = "Firefox Timelapse v0.1"
-; Label settings
-Global $addlabel = IniRead("fftl.ini", "label", "addlabel", "False")
-Global $caption = IniRead("fftl.ini", "label", "caption", " Firefox Timelapse ")
-Global $backgroud = IniRead("fftl.ini", "label", "backgroud", "#0008")
-Global $fill = IniRead("fftl.ini", "label", "fill", "white")
-; Logo Settings
-Global $addlogo = IniRead("fftl.ini", "logo", "addlogo", "False")
-Global $logo = IniRead("fftl.ini", "logo", "logo", "")
-; Animated GIF
-Global $anigif = IniRead("fftl.ini", "gif", "convert2gif", "False")
+Global $URL = IniRead($inifile, "settings", "url", "")
+Global $directory = IniRead($inifile, "files", "directory", @ScriptDir & "\")
+Global $imagefilename = IniRead($inifile, "files", "imagefilename", "image_%d.jpg")
+Global $videofilename = IniRead($inifile, "files", "videofilename", "fftl-video.avi")
+Global $reload = IniRead($inifile, "settings", "reload", "60") * 1000
+Global $tooltips = IniRead($inifile, "settings", "tooltips", "True")
+Global $log = IniRead($inifile, "settings", "log", "False")
 
-If $URL = "" Then
-	$URL = InputBox($title, "Enter URL:", "http://example.com")
-	If @error Then
-		MsgBox(0, $title, "Empty URL or canceled. I will terminate.")
-		Exit
-	EndIf
-EndIf
+; Rectangle
+Global $iX1 = IniRead($inifile, "region", "X1", "")
+Global $iY1 = IniRead($inifile, "region", "Y1", "")
+Global $iX2 = IniRead($inifile, "region", "X2", "")
+Global $iY2 = IniRead($inifile, "region", "Y2", "")
+Global $fps = IniRead($inifile, "video", "fps", "5")
+Global $title = "Firefox Timelapse v0.1"
+
+; Label settings
+Global $addlabel = IniRead($inifile, "label", "addlabel", "False")
+Global $caption = IniRead($inifile, "label", "caption", " Firefox Timelapse ")
+Global $backgroud = IniRead($inifile, "label", "backgroud", "#0008")
+Global $fill = IniRead($inifile, "label", "fill", "white")
+
+; Logo Settings
+Global $addlogo = IniRead($inifile, "logo", "addlogo", "False")
+Global $logo = IniRead($inifile, "logo", "logo", "")
+
+; Animated GIF
+Global $anigif = IniRead($inifile, "gif", "convert2gif", "False")
 
 ; check for correct filename
 If Not StringInStr($imagefilename, "%d") Then
@@ -68,13 +68,23 @@ If $directory <> "" And Not FileExists($directory) Then
 	MsgBox(0, $title, "Directory " & $directory & " doesn´t exist. I will terminate.")
 	Exit
 EndIf
-
 If $directory = "" Then
 	$directory = @ScriptDir & "\"
 EndIf
-
 If StringRight($directory, 1) <> "\" Then
 	$directory = $directory & "\"
+EndIf
+
+; check for required binaries
+_checkfiles()
+
+; get URL to open/connect
+If $URL = "" Then
+	$URL = InputBox($title, "Enter URL:", "http://example.com")
+	If @error Then
+		MsgBox(0, $title, "Empty URL or canceled. I will terminate.")
+		Exit
+	EndIf
 EndIf
 
 ; connect to Firefox instance
@@ -87,12 +97,13 @@ Else
 	Exit
 EndIf
 
+; wait 10 seconds
 Sleep(10000)
 
+; let the user draw a rectangle
 If $iX1 = "" Then
 	MsgBox(0, $title, "Now click 'Ok' and draw a rectangle to be captured. To stop recording, hit Alt-Shift-S.")
 	_Mark_Rect()
-	;MsgBox(0,"",$iX1 & ", " & $iy1 & ", " & $iX2 & ", " & $iy2)
 EndIf
 
 _getscreenshots()
@@ -149,7 +160,6 @@ Func _getscreenshots()
 	WEnd
 EndFunc   ;==>_getscreenshots
 
-
 Func _Mark_Rect()
 	Local $aMouse_Pos, $hMask, $hMaster_Mask, $iTemp
 	Local $UserDLL = DllOpen("user32.dll")
@@ -159,7 +169,6 @@ Func _Mark_Rect()
 	WinSetTrans($hCross_GUI, "", 8)
 	GUISetState(@SW_SHOW, $hCross_GUI)
 	GUISetCursor(3, 1, $hCross_GUI)
-
 	Global $hRectangle_GUI = GUICreate("", @DesktopWidth, @DesktopHeight, 0, 0, $WS_POPUP, $WS_EX_TOOLWINDOW + $WS_EX_TOPMOST)
 	GUISetBkColor(0x000000)
 
@@ -175,9 +184,7 @@ Func _Mark_Rect()
 
 	; Draw rectangle while mouse button pressed
 	While _IsPressed("01", $UserDLL)
-
 		$aMouse_Pos = MouseGetPos()
-
 		$hMaster_Mask = _WinAPI_CreateRectRgn(0, 0, 0, 0)
 		$hMask = _WinAPI_CreateRectRgn($iX1, $aMouse_Pos[1], $aMouse_Pos[0], $aMouse_Pos[1] + 1) ; Bottom of rectangle
 		_WinAPI_CombineRgn($hMaster_Mask, $hMask, $hMaster_Mask, 2)
@@ -193,10 +200,8 @@ Func _Mark_Rect()
 		_WinAPI_DeleteObject($hMask)
 		; Set overall region
 		_WinAPI_SetWindowRgn($hRectangle_GUI, $hMaster_Mask)
-
 		If WinGetState($hRectangle_GUI) < 15 Then GUISetState()
 		Sleep(10)
-
 	WEnd
 
 	; Get second mouse position
@@ -214,23 +219,20 @@ Func _Mark_Rect()
 		$iY1 = $iY2
 		$iY2 = $iTemp
 	EndIf
-
 	GUIDelete($hRectangle_GUI)
 	GUIDelete($hCross_GUI)
 	DllClose($UserDLL)
-	_log2file('@@ Debug(' & @ScriptLineNumber & ') Selected rectangle: X1: " & $iX1 & ", Y1: " & $iY1 & ", X2: " & $iX2 & ", Y2: " & $iY2)
+	_log2file("Selected rectangle: X1: " & $iX1 & ", Y1: " & $iY1 & ", X2: " & $iX2 & ", Y2: " & $iY2)
 EndFunc   ;==>_Mark_Rect
 
 Func _postprocessing()
 	; ffmpeg -r 5 -f image2 -i d:\ingress\fftl\image_%05d.jpg -qscale 0 d:\ingress\fftl\test.avi
 	MsgBox(0, $title, "Finished recording " & $count & " images. Let´s invoke ffmpeg for video conversion.", 5)
-
 	Local $infile = $directory & StringReplace($imagefilename, "%d", "%05d")
 	Local $outfile = $directory & $videofilename
 	Local $ffmpeg = @ScriptDir & "\ffmpeg.exe"
 	Local $parms = "-r " & $fps & " -f image2 -i " & """" & $infile & """" & " -qscale 0 " & """" & $outfile & """"
-	_log2file('@@ Debug(' & @ScriptLineNumber & ') : $parms = ' & $parms & @CRLF & '>Error code: ' & @error) ;### Debug Console
-
+	_log2file("ffmpeg: $parms = " & $parms)
 	If FileExists($outfile) Then
 		$answer = MsgBox(4, $title, "The video file '" & $outfile & "' does exist. Overwrite? (No = exit without conversion)")
 		If $answer = 6 Then
@@ -245,10 +247,11 @@ Func _postprocessing()
 	ShellExecuteWait($ffmpeg, $parms, $directory, "", @SW_HIDE)
 	If Not @error Then
 		MsgBox(0, $title, "Sucessfully converted " & $count & " JPGs to AVI. Video file saved as " & $outfile & ".", 10)
+		; if activated; convert to animated GIF
 		If $anigif = "True" Then
 			$giffile = StringReplace($videofilename, ".avi", ".gif")
 			_converttogif($outfile, $directory & $giffile)
-			MsgBox(0, $title, "Sucessfully converted AVI to animated GIF. GIF file saved as " & $directory & $giffile & ".", 10)
+			MsgBox(0, $title, "Sucessfully converted AVI to animated GIF. GIF file saved as '" & $directory & $giffile & "'.", 10)
 		EndIf
 	Else
 		MsgBox(0, $title, "Something went wrong. Sorry!", 10)
@@ -269,7 +272,7 @@ Func _addlabel($imgfile)
 	$caption = StringReplace($caption, "<MIN>", @MIN)
 	$caption = StringReplace($caption, "<SEC>", @SEC)
 	Local $parms = """" & $imgfile & """" & " -fill " & $fill & " -undercolor " & """" & $backgroud & """" & " -gravity South -annotate +0+5 " & """" & $caption & """" & " " & """" & $outfile & """"
-	_log2file('@@ Debug(' & @ScriptLineNumber & ') : $parms = ' & $parms & @CRLF & '>Error code: ' & @error) ;### Debug Console
+	_log2file("convert: $parms = " & $parms)
 	ShellExecuteWait($convert, $parms, $directory, "", @SW_HIDE)
 	If FileExists($outfile) And FileGetSize($outfile) > 200 Then
 		FileDelete($imgfile)
@@ -282,7 +285,7 @@ Func _addlogo($imgfile)
 	Local $composite = @ScriptDir & "\composite.exe"
 	Local $outfile = $directory & "tmp.jpg"
 	Local $parms = """" & $logo & """" & " " & """" & $imgfile & """" & " " & """" & $outfile & """"
-	_log2file('@@ Debug(' & @ScriptLineNumber & ') : $parms = ' & $parms & @CRLF & '>Error code: ' & @error) ;### Debug Console
+	_log2file("composite: $parms = " & $parms)
 	ShellExecuteWait($composite, $parms, $directory, "", @SW_HIDE)
 	If FileExists($outfile) And FileGetSize($outfile) > 200 Then
 		FileDelete($imgfile)
@@ -294,16 +297,39 @@ Func _converttogif($vidfile, $giffile)
 	; Convert .avi to animated gif(uncompressed)  ffmpeg -i video_origine.avi gif_anime.gif
 	Local $ffmpeg = @ScriptDir & "\ffmpeg.exe"
 	Local $parms = "-i " & """" & $vidfile & """" & " " & """" & $giffile & """"
-	_log2file('@@ Debug(' & @ScriptLineNumber & ') : $parms = ' & $parms & @CRLF & '>Error code: ' & @error) ;### Debug Console
+	_log2file("ffmpeg: $parms = " & $parms)
 	; start ffmpeg
 	ShellExecuteWait($ffmpeg, $parms, $directory, "", @SW_HIDE)
 EndFunc   ;==>_converttogif
 
 Func _log2file($line)
-	if $log = "True" Then
+	If $log = "True" Then
 		Local $tCur = _Date_Time_GetLocalTime()
-		Local $logfile = FileOpen(@ScriptDir & "\fftl.log", 1)
-		FileWriteLine($logfile, _Date_Time_SystemTimeToDateTimeStr($tCur) & " " & $line & @CRLF)
-		FileClose($logfile)
+		Local $lf = FileOpen($logfile, 1)
+		FileWriteLine($lf, _Date_Time_SystemTimeToDateTimeStr($tCur) & " " & $line & @CRLF)
+		FileClose($lf)
 	EndIf
 EndFunc   ;==>_log2file
+
+Func _checkfiles()
+	Local $binfiles[4]
+	Local $err = False
+
+	$binfiles[0] = @ScriptDir & "\ffmpeg.exe"
+	$binfiles[1] = @ScriptDir & "\convert.exe"
+	$binfiles[2] = @ScriptDir & "\composite.exe"
+	$binfiles[3] = $logo
+
+	For $i = 0 To UBound($binfiles, 1) - 1
+		If Not FileExists($binfiles[$i]) Then
+			_log2file("missing file : " & $binfiles[$i])
+			MsgBox(0, $title, "Error, missing file: '" & $binfiles[$i] & "'!")
+			$err = True
+		EndIf
+	Next
+	If $err = True Then
+		Exit
+	Else
+		_log2file("All required files are present.")
+	EndIf
+EndFunc   ;==>_checkfiles
