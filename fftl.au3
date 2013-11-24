@@ -174,7 +174,7 @@ Func _getscreenshots()
 			_WinAPI_DeleteObject($hBmp)
 			$rlcount += 1
 			If $tooltips = "True" Then
-				TrayTip("", "Saved screenshot as " & $filename, 10, 1)
+				TrayTip("", "Screenshot saved as '" & $filename & "'"., 10, 1)
 			EndIf
 
 			; add label
