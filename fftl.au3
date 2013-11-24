@@ -1,5 +1,5 @@
 ﻿; Firefox Timelapse
-; 2013 Markus Busche, m.busche+fftl@gmail.com
+; 2013 Markus Busche, elpatron@cepheus.uberspace.de
 ;
 #region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=camera-video_mount.ico
@@ -7,6 +7,7 @@
 #AutoIt3Wrapper_Res_Fileversion=0.1.0.2
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=elpatron@cepheus.uberspace.de
+#AutoIt3Wrapper_Run_After="D:\Program Files\7-Zip\7z" u fftl_%fileversion%.zip @filelist.txt
 #AutoIt3Wrapper_Run_Tidy=y
 #endregion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
@@ -22,27 +23,33 @@ HotKeySet("+!s", "_postprocessing")
 
 ; Coordinates of rectangle to be recorded
 Global $iX1, $iY1, $iX2, $iY2, $fps
+
+Global $title = "Firefox Timelapse Recorder v0.1.0.2"
 Global $count = 0
 Global $inifile = @ScriptDir & "\fftl.ini"
 Global $logfile = @ScriptDir & "\fftl.log"
 
 ; Read values from INI file fftl.ini
+; General Settings
 Global $URL = IniRead($inifile, "settings", "url", "")
-Global $directory = IniRead($inifile, "files", "directory", @ScriptDir & "\")
-Global $imagefilename = IniRead($inifile, "files", "imagefilename", "image_%d.jpg")
-Global $videofilename = IniRead($inifile, "files", "videofilename", "fftl-video.avi")
 Global $reload = IniRead($inifile, "settings", "reload", "True")
+Global $rlinterval = IniRead($inifile, "settings", "rlinterval", "4")
 Global $tooltips = IniRead($inifile, "settings", "tooltips", "True")
 Global $log = IniRead($inifile, "settings", "log", "False")
 Global $captureinterval = IniRead($inifile, "settings", "captureinterval", "60") * 1000
 
-; Rectangle
+; Files settings
+Global $directory = IniRead($inifile, "files", "directory", @ScriptDir & "\")
+Global $imagefilename = IniRead($inifile, "files", "imagefilename", "image_%d.jpg")
+Global $videofilename = IniRead($inifile, "files", "videofilename", "fftlrec.avi")
+Global $giffilename = IniRead($inifile, "files", "giffilename", "fftlrec.gif")
+
+; Predefined rectangle
 Global $iX1 = IniRead($inifile, "region", "X1", "")
 Global $iY1 = IniRead($inifile, "region", "Y1", "")
 Global $iX2 = IniRead($inifile, "region", "X2", "")
 Global $iY2 = IniRead($inifile, "region", "Y2", "")
 Global $fps = IniRead($inifile, "video", "fps", "5")
-Global $title = "Firefox Timelapse Recorder v0.1.0.2"
 
 ; Label settings
 Global $addlabel = IniRead($inifile, "label", "addlabel", "False")
@@ -138,8 +145,11 @@ Exit
 Func _getscreenshots()
 	; set timer
 	Local $begin = TimerInit()
+	Local $rlcount = 0
 	Local $countstr = ""
 	Local $filename = ""
+	Local $hBmp
+
 	While 1
 		Sleep(1000)
 		$dif = TimerDiff($begin)
@@ -159,9 +169,12 @@ Func _getscreenshots()
 			$filename = $directory & StringReplace($imagefilename, "%d", $countstr)
 			; capture selected region
 			_log2file("Captured image: " & $filename)
-			_ScreenCapture_Capture($filename, $iX1, $iY1, $iX2, $iY2, False)
+			$hBmp = _ScreenCapture_Capture("", $iX1, $iY1, $iX2, $iY2, False)
+			_ScreenCapture_SaveImage($filename, $hBmp)
+			_WinAPI_DeleteObject($hBmp)
+			$rlcount += 1
 			If $tooltips = "True" Then
-				TrayTip("", "Saved screenshot " & $filename, 10, 1)
+				TrayTip("", "Saved screenshot as " & $filename, 10, 1)
 			EndIf
 
 			; add label
@@ -175,7 +188,8 @@ Func _getscreenshots()
 			EndIf
 
 			; reload page
-			If $reload = "True" Then
+			If $reload = "True" And $rlcount = $rlinterval Then
+				$rlcount = 0
 				_log2file("Reloading page.")
 				_FFAction("Reload")
 				If @error Then

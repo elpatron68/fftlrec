@@ -25,14 +25,20 @@ GNU Lesser General Public License (LGPL) version 2.1. Read here
 for details: http://ffmpeg.org/legal.html.
 
 The included program ImageMagick is free software licensed under a
-GNU GPL v3 compatible license. See .\bin\License.txt for details.
+GNU GPL v3 compatible license. See ImageMagick_License.txt for details.
 
-(2) About this program
+(2) Purpose
 Firefox Timelapse Recorder creates periodical screenshots of a
-rectangle of a website opened in the Mozilla Firefox webbrowser.
+rectangle of a website opened in Mozilla´s Firefox webbrowser.
 
 The page will be reloaded periodically. After finishing recording,
 all taken screenshots will be converted to an MPEG4 AVI file.
+
+A caption and a graphical logo can be added to the video.
+
+Also, an animated GIF file can be generated.
+
+For details, edit fftl.ini.
 
 (3) System requirements
  - Microsoft Windows XP or never, 32 or 64 bit
@@ -76,10 +82,12 @@ Q: Will there be a version for Chrome/Opera/Safari/Internet Explorer?
 A: Probably not.
 
 Q: Will there be a version for Linux, MacOS, iOS, Android, ...?
-A: Definately not.
+A: Probably not.
 
 (8) Version information
 v0.1		11/20/2013	Initial semi-public beta release
-v0.1.0.2	11/22/2013	Add an annotation to the video
-			Add a logo to the video
-			Convert the video to animated GIF
+v0.1.0.2	11/22/2013	Add an annotation (label) to the video
+						Add a logo to the video
+						Convert the video to animated GIF
+						Added logging
+						Added many more options to fftl.ini
