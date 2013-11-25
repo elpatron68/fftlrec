@@ -32,21 +32,33 @@ Firefox Timelapse Recorder creates periodical screenshots of a
 rectangle of a website opened in Mozilla´s Firefox webbrowser.
 
 The page will be reloaded periodically. After finishing recording,
-all taken screenshots will be converted to an MPEG4 AVI file.
+the screenshots will be converted to an MPEG4 AVI file.
 
 A caption and a graphical logo can be added to the video.
 
 Also, an animated GIF file can be generated.
 
-For details, edit fftl.ini.
-
-(3) System requirements
+(3) Latest version of this script
+Get the latest version of fftlrec from
+    (a) https://github.com/elpatron68/fftlrec.git (source only)
+        (a.1) Download ImageMagick from http://www.imagemagick.org/
+              (Win32 static at 16 bits-per-pixel).
+              From the archive extract 'convert.exe' and 
+              'composite.exe' into you fftlrec directory.
+        (a.2) Download ffmpeg from http://ffmpeg.zeranoe.com/builds/
+              (select the newest Win32-Static build).
+              From the archive extract 'ffmpeg.exe' into you fftlrec
+              directory.
+    (b) http://goo.gl/maKBjs (binary and source, ffmpeg and 
+        Imagemagick included)
+        
+(4) System requirements
  - Microsoft Windows XP or never, 32 or 64 bit
  - Mozilla Firefox with plugin MozRepl installed and activated(!)
  - This program has been developed and testet under Windows 8 (64 Bit),
    Windows 7 (64 Bit) and Mozilla Firefox 25.0.1.
 
-(4) Installation and usage
+(5) Installation and usage
 - Install the Firefox plugin MozRepl from
   https://addons.mozilla.org/de/firefox/addon/mozrepl/.
 - Activate MozRepl via Tools -> MozRepl -> Start.
@@ -63,11 +75,11 @@ For details, edit fftl.ini.
 - After stopping the recording progress by hitting Alt-Shift-S, all
   screenshots (JPG) will be put together to an MPEG4 video file (AVI).
 
-(5) Need help?
+(6) Need help?
 Have a look at the included source code, it´s easy to understand.
 To compile the code you need AutoIt (http://www.autoitscript.com).
 
-(6) Thanks
+(7) Thanks
 My thanks go to
 - AutoIt Consulting Ltd.
 - The ffmpeg team (http://ffmpeg.org/).
@@ -77,24 +89,24 @@ My thanks go to
 - Ingress agent silbaer for the initial idea.
 - The Open Icon Library (http://openiconlibrary.sourceforge.net/).
 
-(7) Questions? - Answers!
+(8) Questions? - Answers!
 Q: Will there be a version for Chrome/Opera/Safari/Internet Explorer?
 A: Probably not.
 
 Q: Will there be a version for Linux, MacOS, iOS, Android, ...?
 A: Probably not.
 
-(8) Version information
-v0.1		11/20/2013	Initial semi-public beta release
-v0.1.0.2	11/22/2013	Add an annotation (label) to the video
-						Add a logo to the video
-						Convert the video to animated GIF
-						Added logging
-						Added many more options to fftl.ini
-						
 (9) Limitations
 In some (especially my) multiscreen environments fftlrec cannot
 determine the coordinates of the rectangle to grab when positioned
 on the secondary screen. Workaround: grab it on your primary screen
-or enter the coordinates in fftl.ini.
+or edit the coordinates in fftl.ini.
 
+(10) Version information
+v0.1        11/20/2013  Initial semi-public beta release
+v0.1.0.2    11/22/2013  Add an annotation (label) to the video
+                        Add a logo to the video
+                        Convert the video to animated GIF
+                        Added logging
+                        Added many more options to fftl.ini
+                        
