@@ -36,6 +36,8 @@ the screenshots will be converted to an MPEG4 AVI file.
 
 A caption and a graphical logo can be added to the video.
 
+Demonstration of fftlrec: http://youtu.be/CZ2QtJADNCM
+
 Also, an animated GIF file can be generated (experimental).
 
 (3) Latest version of this script
