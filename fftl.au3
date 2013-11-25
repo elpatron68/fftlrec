@@ -1,10 +1,10 @@
 ﻿; Firefox Timelapse
-; 2013 Markus Busche, elpatron@cepheus.uberspace.de
+; 2013 elpatron, elpatron@cepheus.uberspace.de
 ;
 #region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=camera-video_mount.ico
 #AutoIt3Wrapper_UseUpx=n
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.2
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.3
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=elpatron@cepheus.uberspace.de
 #AutoIt3Wrapper_Run_After="D:\Program Files\7-Zip\7z" u fftl_%fileversion%.zip @filelist.txt
@@ -24,7 +24,7 @@ HotKeySet("+!s", "_postprocessing")
 ; Coordinates of rectangle to be recorded
 Global $iX1, $iY1, $iX2, $iY2, $fps
 
-Global $title = "Firefox Timelapse Recorder v0.1.0.2"
+Global $title = "Firefox Timelapse Recorder v0.1.0.3"
 Global $count = 0
 Global $inifile = @ScriptDir & "\fftl.ini"
 Global $logfile = @ScriptDir & "\fftl.log"
@@ -67,10 +67,15 @@ Global $delay = IniRead($inifile, "gif", "delay", "5")
 Global $colors = IniRead($inifile, "gif", "colors", "51")
 Global $loop = IniRead($inifile, "gif", "loop", "0")
 
-; check for correct filename
+; check for correct filename, add %d if not present
 If Not StringInStr($imagefilename, "%d") Then
 	$imagefilearr = StringSplit($imagefilename, ".")
 	$imagefilename = $imagefilearr[0] & "_%d.jpg"
+EndIf
+
+; empty directory (or just <TIMESTAMP>) -> script-dir (+ <TIMESTAMP>)
+If $directory = "" Or $directory = "<TIMESTAMP>" Then
+	$directory = @ScriptDir & "\" & $directory
 EndIf
 
 ; expand / create directory
@@ -85,15 +90,13 @@ If StringInStr($directory, "<TIMESTAMP>", 1) Then
 	EndIf
 EndIf
 
-; check directory
-If $directory <> "" And Not FileExists($directory) Then
+If Not FileExists($directory) Then
 	MsgBox(0, $title, "Directory " & $directory & " doesn´t exist. I will terminate.")
 	_log2file("Directory " & $directory & " doesn´t exist. Exit.")
 	Exit
 EndIf
-If $directory = "" Then
-	$directory = @ScriptDir & "\"
-EndIf
+
+; add a backslash
 If StringRight($directory, 1) <> "\" Then
 	$directory = $directory & "\"
 EndIf
@@ -174,7 +177,7 @@ Func _getscreenshots()
 			_WinAPI_DeleteObject($hBmp)
 			$rlcount += 1
 			If $tooltips = "True" Then
-				TrayTip("", "Screenshot saved as '" & $filename & "'"., 10, 1)
+				TrayTip("", "Screenshot saved as '" & $filename & "'.", 10, 1)
 			EndIf
 
 			; add label

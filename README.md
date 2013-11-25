@@ -36,22 +36,22 @@ the screenshots will be converted to an MPEG4 AVI file.
 
 A caption and a graphical logo can be added to the video.
 
-Also, an animated GIF file can be generated.
+Also, an animated GIF file can be generated (experimental).
 
 (3) Latest version of this script
 Get the latest version of fftlrec from
     (a) https://github.com/elpatron68/fftlrec.git (source only)
         (a.1) Download ImageMagick from http://www.imagemagick.org/
               (Win32 static at 16 bits-per-pixel).
-              From the archive extract 'convert.exe' and 
+              From the archive extract 'convert.exe' and
               'composite.exe' into you fftlrec directory.
         (a.2) Download ffmpeg from http://ffmpeg.zeranoe.com/builds/
               (select the newest Win32-Static build).
               From the archive extract 'ffmpeg.exe' into you fftlrec
               directory.
-    (b) Download fftlrec from http://goo.gl/maKBjs (binary and 
+    (b) Download fftlrec from http://goo.gl/maKBjs (binary and
         source, ffmpeg and Imagemagick included)
-        
+
 (4) System requirements
  - Microsoft Windows XP or never, 32 or 64 bit
  - Mozilla Firefox with plugin MozRepl installed and activated(!)
@@ -109,4 +109,5 @@ v0.1.0.2    11/22/2013  Add an annotation (label) to the video
                         Convert the video to animated GIF
                         Added logging
                         Added many more options to fftl.ini
-                        
+v0.1.0.3    11/25/2013  Fixed bug concerning directory creation
+
