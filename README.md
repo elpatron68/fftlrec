@@ -91,3 +91,10 @@ v0.1.0.2	11/22/2013	Add an annotation (label) to the video
 						Convert the video to animated GIF
 						Added logging
 						Added many more options to fftl.ini
+						
+(9) Limitations
+In some (especially my) multiscreen environments fftlrec cannot
+determine the coordinates of the rectangle to grab when positioned
+on the secondary screen. Workaround: grab it on your primary screen
+or enter the coordinates in fftl.ini.
+
