@@ -49,8 +49,8 @@ Get the latest version of fftlrec from
               (select the newest Win32-Static build).
               From the archive extract 'ffmpeg.exe' into you fftlrec
               directory.
-    (b) http://goo.gl/maKBjs (binary and source, ffmpeg and 
-        Imagemagick included)
+    (b) Download fftlrec from http://goo.gl/maKBjs (binary and 
+        source, ffmpeg and Imagemagick included)
         
 (4) System requirements
  - Microsoft Windows XP or never, 32 or 64 bit
