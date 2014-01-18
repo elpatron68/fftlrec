@@ -44,11 +44,12 @@ Also, an animated GIF file can be generated (experimental).
 Get the latest version of fftlrec from
     (a) https://github.com/elpatron68/fftlrec.git (source only)
         (a.1) Download ImageMagick from http://www.imagemagick.org/
-              (Win32 static at 16 bits-per-pixel).
-              From the archive extract 'convert.exe' and
-              'composite.exe' into you fftlrec directory.
+              (Win32 or Win64 static at 16 bits-per-pixel).
+              From the archive extract 'convert.exe',
+              'composite.exe' and 'vcomp100.dll' into your fftlrec
+              directory.
         (a.2) Download ffmpeg from http://ffmpeg.zeranoe.com/builds/
-              (select the newest Win32-Static build).
+              (select the newest Win32- or Win64-Static build).
               From the archive extract 'ffmpeg.exe' into you fftlrec
               directory.
     (b) Download fftlrec from http://goo.gl/maKBjs (binary and
